@@ -31,7 +31,7 @@ func GetAllStations() []station {
 	return VerticesToStations(vertList)
 }
 
-func GetStationsAfter(direction string, station string) []station {
+func GetStationsAfter(direction string, stanox string) []station {
 	var filterKey string
 	if direction == "UP" {
 		filterKey = UP_KEY
@@ -39,7 +39,7 @@ func GetStationsAfter(direction string, station string) []station {
 		filterKey = DOWN_KEY
 	}
 	query := g.V().
-		Has(STATION_NAME_KEY, station).
+		HasID(stanox).
 		Repeat(
 			grammes.Traversal().
 				OutE().
@@ -66,7 +66,7 @@ func GetStationsAfter(direction string, station string) []station {
 	return VerticesToStations(vertList)
 }
 
-func GetPathsAfter(direction string, station string) [][]station {
+func GetPathsAfter(direction string, stanox string) [][]station {
 	var filterKey string
 	if direction == "UP" {
 		filterKey = UP_KEY
@@ -74,7 +74,7 @@ func GetPathsAfter(direction string, station string) [][]station {
 		filterKey = DOWN_KEY
 	}
 	query := g.V().
-		Has(STATION_NAME_KEY, station).
+		HasID(stanox).
 		Repeat(
 			grammes.Traversal().
 				OutE().
@@ -105,7 +105,7 @@ func GetPathsAfter(direction string, station string) [][]station {
 	return VerticesCollectionToStationsCollection(pathList)
 }
 
-func GetPathsBetween(direction string, stationA string, stationB string) [][]station {
+func GetPathsBetween(direction string, stanoxA string, stanoxB string) [][]station {
 	var filterKey string
 	if direction == "UP" {
 		filterKey = UP_KEY
@@ -113,7 +113,7 @@ func GetPathsBetween(direction string, stationA string, stationB string) [][]sta
 		filterKey = DOWN_KEY
 	}
 	query := g.V().
-		Has(STATION_NAME_KEY, stationA).
+		HasID(stanoxA).
 		Repeat(
 			grammes.Traversal().
 				OutE().
@@ -123,7 +123,7 @@ func GetPathsBetween(direction string, stationA string, stationB string) [][]sta
 		).
 		Until(
 			grammes.Traversal().
-				Has(STATION_NAME_KEY, stationB).
+				HasID(stanoxB).
 				Or().
 				Loops().Is(50),
 		).

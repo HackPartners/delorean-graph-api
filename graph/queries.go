@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/northwesternmutual/grammes"
+	. "github.com/northwesternmutual/grammes/model"
 	"github.com/northwesternmutual/grammes/query/traversal"
 )
 
@@ -20,17 +21,17 @@ func execute(query traversal.String) [][]byte {
 	return result
 }
 
-func GetAllStations() []string {
-	query := g.V().Values(STATION_NAME_KEY)
+func GetAllStations() []station {
+	query := g.V()
 	result := execute(query)
-	list, err := UnmarshalList(result)
+	vertList, err := UnmarshalVertexList(result)
 	if err != nil {
 		log.Fatalf("Unmarshalling error: %s\n", err.Error())
 	}
-	return list
+	return VerticesToStations(vertList)
 }
 
-func GetStationsAfter(direction string, station string) []string {
+func GetStationsAfter(direction string, station string) []station {
 	var filterKey string
 	if direction == "UP" {
 		filterKey = UP_KEY
@@ -38,7 +39,7 @@ func GetStationsAfter(direction string, station string) []string {
 		filterKey = DOWN_KEY
 	}
 	query := g.V().
-		Has(STATION_NAME_KEY, "WIMBLEDON").
+		Has(STATION_NAME_KEY, station).
 		Repeat(
 			grammes.Traversal().
 				OutE().
@@ -56,17 +57,16 @@ func GetStationsAfter(direction string, station string) []string {
 		Path().
 		Unfold().
 		HasLabel(STATION_LABEL).
-		Dedup().
-		Values(STATION_NAME_KEY)
+		Dedup()
 	result := execute(query)
-	list, err := UnmarshalList(result)
+	vertList, err := UnmarshalVertexList(result)
 	if err != nil {
 		log.Fatalf("Unmarshalling error: %s\n", err.Error())
 	}
-	return list
+	return VerticesToStations(vertList)
 }
 
-func GetPathsAfter(direction string, station string) [][]string {
+func GetPathsAfter(direction string, station string) [][]station {
 	var filterKey string
 	if direction == "UP" {
 		filterKey = UP_KEY
@@ -74,7 +74,7 @@ func GetPathsAfter(direction string, station string) [][]string {
 		filterKey = DOWN_KEY
 	}
 	query := g.V().
-		Has(STATION_NAME_KEY, "WIMBLEDON").
+		Has(STATION_NAME_KEY, station).
 		Repeat(
 			grammes.Traversal().
 				OutE().
@@ -95,18 +95,17 @@ func GetPathsAfter(direction string, station string) [][]string {
 			grammes.Traversal().
 				Unfold().
 				HasLabel(STATION_LABEL).
-				Values(STATION_NAME_KEY).
 				Fold(),
 		)
 	result := execute(query)
-	pathList, err := UnmarshalListCollection(result)
+	pathList, err := UnmarshalVertexCollection(result)
 	if err != nil {
 		log.Fatalf("Unmarshalling error: %s\n", err.Error())
 	}
-	return pathList
+	return VerticesCollectionToStationsCollection(pathList)
 }
 
-func GetPathsBetween(direction string, stationA string, stationB string) [][]string {
+func GetPathsBetween(direction string, stationA string, stationB string) [][]station {
 	var filterKey string
 	if direction == "UP" {
 		filterKey = UP_KEY
@@ -133,13 +132,12 @@ func GetPathsBetween(direction string, stationA string, stationB string) [][]str
 			grammes.Traversal().
 				Unfold().
 				HasLabel(STATION_LABEL).
-				Values(STATION_NAME_KEY).
 				Fold(),
 		)
 	result := execute(query)
-	pathList, err := UnmarshalListCollection(result)
+	pathList, err := UnmarshalVertexCollection(result)
 	if err != nil {
 		log.Fatalf("Unmarshalling error: %s\n", err.Error())
 	}
-	return pathList
+	return VerticesCollectionToStationsCollection(pathList)
 }

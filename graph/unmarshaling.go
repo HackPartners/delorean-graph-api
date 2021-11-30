@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/northwesternmutual/grammes/gremerror"
+	. "github.com/northwesternmutual/grammes/model"
 )
 
 type gStringList struct {
@@ -34,6 +35,11 @@ type gPathDescripter struct {
 type gSetList struct {
 	Type  string        `json:"@type"`
 	Value []gStringList `json:"@value"`
+}
+
+type gVertexListCollection struct {
+	Type  string       `json:"@type"`
+	Value []VertexList `json:"@value"`
 }
 
 // UnmarshalList is a utility to unmarshal a list
@@ -87,4 +93,26 @@ func UnmarshalPaths(data [][]byte) ([]gPath, error) {
 	}
 
 	return list, nil
+}
+
+// UnmarshalList is a utility to unmarshal a list
+// or array of IDs properly.
+func UnmarshalVertexCollection(data [][]byte) ([][]Vertex, error) {
+	var list []VertexList
+
+	for _, res := range data {
+		var listPart gVertexListCollection
+		if err := json.Unmarshal(res, &listPart); err != nil {
+			return nil, gremerror.NewUnmarshalError("UnmarshalVertexList", res, err)
+		}
+
+		list = append(list, listPart.Value...)
+	}
+
+	var output [][]Vertex
+	for _, vertexList := range list {
+		output = append(output, vertexList.Vertices)
+	}
+
+	return output, nil
 }

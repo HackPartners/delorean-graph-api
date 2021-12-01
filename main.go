@@ -16,6 +16,7 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Pre(middleware.RemoveTrailingSlash())
 
 	// Routes
 	e.GET("/", func(c echo.Context) error {

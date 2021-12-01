@@ -21,11 +21,12 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!\n")
 	})
-	e.GET("/stations", AllStations).Name = "all-stations"
+	e.GET("/stations", Stations).Name = "stations"
 	e.GET("/stations/:station/up", UpStations).Name = "up-stations"
 	e.GET("/stations/:station/down", DownStations).Name = "down-stations"
-	e.GET("/paths/:station/up", UpPaths).Name = "up-stations"
-	e.GET("/paths/:station/down", DownPaths).Name = "down-stations"
+	e.GET("/paths", Paths).Name = "paths"
+	e.GET("/paths/:station/up", UpPaths).Name = "up-paths"
+	e.GET("/paths/:station/down", DownPaths).Name = "down-paths"
 	e.GET("/paths/:stationA/to/:stationB/up", UpPathsBetweenStations).Name = "up-paths-between-stations"
 	e.GET("/paths/:stationA/to/:stationB/down", DownPathsBetweenStations).Name = "down-paths-between-stations"
 

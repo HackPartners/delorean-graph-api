@@ -1,5 +1,7 @@
 # Delorian Graph API
 
+RESTful API to query the sations graph. Trailing slashes are tolerated. Query params are not case sensative, path segments are however.
+
 ## Station
 
 Example station object returned by this API:
@@ -19,13 +21,13 @@ Returns an array of JSON objects representing the stations requested
 
 **:direction** is either **up** or **down**
 
-**GET** all stations
+**GET** all stations:
 
 ```
 {api_url}/stations
 ```
 
-**GET** stations after target station
+**GET** stations after target station:
 
 ```
 {api_url}/stations/:from/:direction
